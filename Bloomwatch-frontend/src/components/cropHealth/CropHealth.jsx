@@ -1,5 +1,16 @@
 import React from "react";
+import { GoogleMap, LoadScript, Marker, Circle } from "@react-google-maps/api";
 import { Home, Calendar, Map, Plus, Minus, Crosshair } from "lucide-react";
+
+const containerStyle = {
+  width: "100%",
+  height: "100%",
+};
+
+const center = {
+  lat: 5.6037, // Accra (example location)
+  lng: -0.1870,
+};
 
 export default function CropHealthMap() {
   return (
@@ -21,28 +32,31 @@ export default function CropHealthMap() {
         <button className="px-4 py-2 text-gray-600">Weather</button>
       </div>
 
-      {/* Map Section */}
+      {/* Google Map Section */}
       <div className="relative flex-1">
-        <img
-          src="/images/Crop1.jpg" // put your uploaded image into public/map.jpg
-          alt="Crop Map"
-          className="w-full h-full object-cover"
-        />
+        <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
+          <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={13}>
+            {/* Example farm markers */}
+            <Marker position={center} label="Main Farm" />
+            <Marker position={{ lat: 5.6137, lng: -0.1800 }} label="North Field" />
 
-        {/* Labels with dashed borders */}
-        <div className="absolute top-1/3 left-6 border-2 border-dashed border-green-400 w-32 h-32 flex items-center justify-center">
-          <span className="bg-white text-xs px-2 py-1 rounded shadow">
-            Main Farmland
-          </span>
-        </div>
-        <div className="absolute bottom-1/3 right-10 border-2 border-dashed border-yellow-400 w-32 h-32 flex items-center justify-center">
-          <span className="bg-white text-xs px-2 py-1 rounded shadow">
-            North Field
-          </span>
-        </div>
+            {/* Example field boundaries */}
+            <Circle
+              center={center}
+              radius={500}
+              options={{
+                strokeColor: "#4ade80",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#4ade8033",
+                fillOpacity: 0.35,
+              }}
+            />
+          </GoogleMap>
+        </LoadScript>
 
         {/* Floating Buttons */}
-        <div className="absolute right-4 top-1/3 flex flex-col gap-2">
+        <div className="absolute right-4 top-1/3 flex flex-col gap-2 z-10">
           <button className="p-2 bg-white rounded-full shadow">
             <Plus size={18} />
           </button>
@@ -55,7 +69,7 @@ export default function CropHealthMap() {
         </div>
 
         {/* Health Condition Card */}
-        <div className="absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow p-3 text-sm">
+        <div className="absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow p-3 text-sm z-10">
           <div className="flex justify-between items-center">
             <h2 className="font-semibold">Health Condition</h2>
             <button className="text-gray-400 text-lg">×</button>
