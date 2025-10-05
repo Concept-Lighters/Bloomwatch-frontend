@@ -18,6 +18,7 @@ export default function Dashboard() {
     { id: 3, title: 'Check Irrigation System', chip: 'All', when: 'Oct 5', checked: false },
   ];
 
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col max-w-md mx-auto">
       {/* Greeting */}
@@ -230,7 +231,8 @@ export default function Dashboard() {
             onClick={() => navigate('/crop-health')}
             className="py-3 flex flex-col items-center text-gray-500 hover:text-dashboardheadcolor transition-colors"
           >
-            <Map className="w-5 h-5" />
+            <Map className="w-5 h-5"
+             />
             <span className="text-[11px]">Crop Map</span>
           </button>
         </div>

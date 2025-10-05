@@ -1,7 +1,10 @@
 import React from "react";
 import { Home, Calendar, Map, Plus, Minus, Crosshair } from "lucide-react";
+import { useNavigate } from "react-router";
 
-export default function CropWealth() {
+export default function CropWeather() {
+
+  const navigate = useNavigate();
   return (
     <div className="w-full h-screen flex flex-col bg-white font-sans">
       {/* Header */}
@@ -14,9 +17,15 @@ export default function CropWealth() {
 
       {/* Tabs */}
       <div className="flex justify-center gap-6 p-5">
-        <button className="px-4 py-2 text-gray-600">Health</button>
-        <button className="px-4 py-2 text-gray-600">Satellite</button>
-        <button className="px-4 py-2 text-white bg-indigo-600 rounded-md">
+        <button className="px-4 py-2 text-gray-600"
+        onClick={() => navigate("/crop-health")}
+        >Health</button>
+        <button className="px-4 py-2 text-gray-600"
+        onClick={() => navigate("/crop-satellite")}
+        >Satellite</button>
+        <button className="px-4 py-2 text-white bg-indigo-600 rounded-md"
+        onClick={() => navigate("/crop-wealth")}
+        >
           Weather
         </button>
       </div>

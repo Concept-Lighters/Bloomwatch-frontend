@@ -1,7 +1,13 @@
 import React from "react";
 import { Home, Calendar, Map, Plus, Minus, Crosshair } from "lucide-react";
+import { useNavigate } from "react-router";
 
 export default function CropSatellite() {
+  const navigate = useNavigate();
+
+  const handleNext = () => {
+    navigate("/crop-satellite");
+  };
   return (
     <div className="w-full h-screen flex flex-col bg-white font-sans">
       {/* Header */}
@@ -14,11 +20,18 @@ export default function CropSatellite() {
 
       {/* Tabs */}
       <div className="flex justify-center gap-6 p-5">
-        <button className="px-4 py-2 text-gray-600">Health</button>
-        <button className="px-4 py-2 text-white bg-indigo-600 rounded-md">
+        <button className="px-4 py-2 text-gray-600"
+        onClick={() => navigate("/crop-health")}
+        >Health</button>
+        <button
+          className="px-4 py-2 text-white bg-indigo-600 rounded-md"
+          onClick={handleNext}
+        >
           Satellite
         </button>
-        <button className="px-4 py-2 text-gray-600">Weather</button>
+        <button className="px-4 py-2 text-gray-600"
+        onClick={() => navigate("/crop-wealth")}
+        >Weather</button>
       </div>
 
       {/* Map Section */}
@@ -83,15 +96,15 @@ export default function CropSatellite() {
       {/* Bottom Nav */}
       <div className="flex justify-around items-center border-t py-2 bg-white">
         <div className="flex flex-col items-center text-indigo-600">
-          <Home size={20} />
+          <Home size={20} onClick={() => navigate("/dashboard")} />
           <span className="text-xs">Home</span>
         </div>
         <div className="flex flex-col items-center text-gray-500">
-          <Calendar size={20} />
+          <Calendar size={20} onClick={() => navigate("/calendar")} />
           <span className="text-xs">Calendar</span>
         </div>
         <div className="flex flex-col items-center text-gray-500">
-          <Map size={20} />
+          <Map size={20} onClick={() => navigate("/crop-health")} />
           <span className="text-xs">Crop Map</span>
         </div>
       </div>

@@ -69,11 +69,11 @@ export default function Login() {
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="text-sm font-medium text-gray-700">
-                Phone Number
+                Email
               </label>
               <input
-                type="text"
-                placeholder="020 123 456 7890"
+                type="email"
+                placeholder="Email address"
                 className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>

@@ -1,6 +1,7 @@
 import React from "react";
 import { GoogleMap, LoadScript, Marker, Circle } from "@react-google-maps/api";
 import { Home, Calendar, Map, Plus, Minus, Crosshair } from "lucide-react";
+import { useNavigate } from "react-router"
 
 const containerStyle = {
   width: "100%",
@@ -13,23 +14,36 @@ const center = {
 };
 
 export default function CropHealthMap() {
+
+  const navigate = useNavigate();
+
+  const handleNext = () => {
+        navigate("/crop-health");
+
+  }
   return (
     <div className="w-full h-screen flex flex-col bg-white font-sans">
       {/* Header */}
       <div className="flex justify-between items-center p-4">
         <h1 className="text-lg font-semibold">Crop Health Map</h1>
-        <button className="text-indigo-600 text-sm font-medium">
+        <button className="text-indigo-600 text-sm font-medium"
+         >
           Add Farm Location
         </button>
       </div>
 
       {/* Tabs */}
       <div className="flex justify-center gap-6 p-5">
-        <button className="px-4 py-2 text-white bg-indigo-600 rounded-md">
+        <button className="px-4 py-2 text-white bg-indigo-600 rounded-md"
+        onClick={handleNext}>
           Health
         </button>
-        <button className="px-4 py-2 text-gray-600">Satellite</button>
-        <button className="px-4 py-2 text-gray-600">Weather</button>
+        <button className="px-4 py-2 text-gray-600"
+        onClick={() => navigate("/crop-satellite")}
+        >Satellite</button>
+        <button className="px-4 py-2 text-gray-600"
+        onClick={() => navigate("/crop-wealth")}
+        >Weather</button>
       </div>
 
       {/* Google Map Section */}
@@ -97,15 +111,21 @@ export default function CropHealthMap() {
       {/* Bottom Nav */}
       <div className="flex justify-around items-center border-t py-2 bg-white">
         <div className="flex flex-col items-center text-indigo-600">
-          <Home size={20} />
+          <Home size={20} 
+          onClick={()=> navigate('/dashboard')}
+          />
           <span className="text-xs">Home</span>
         </div>
         <div className="flex flex-col items-center text-gray-500">
-          <Calendar size={20} />
+          <Calendar size={20}
+          onClick={()=> navigate('/calendar')}
+          />
           <span className="text-xs">Calendar</span>
         </div>
         <div className="flex flex-col items-center text-gray-500">
-          <Map size={20} />
+          <Map size={20}
+          onClick={()=> navigate('/crop-health')}
+          />
           <span className="text-xs">Crop Map</span>
         </div>
       </div>

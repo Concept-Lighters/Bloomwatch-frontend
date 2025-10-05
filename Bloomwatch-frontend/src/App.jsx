@@ -7,12 +7,12 @@ import SignUp from "./components/SignUp"
 import Login from "./components/Login"
 import CropHealth from "./components/cropHealth/CropHealth"
 import CropSatellite from "./components/cropHealth/CropSatellite"
-import CropWealth from "./components/cropHealth/CropWealth"
 import FarmLocationSetup from "./components/FarmLocationSetup"
 import ChooseYourCrops from "./components/ChooseYourCrops"
 import Dashboard from "./components/Dashboard"
 import CalendarScreen from "./components/CalendarScreen"
 import NewTask from "./components/NewTask"
+import CropWeather from "./components/cropHealth/CropWeather"
 
 
 function App() {
@@ -42,7 +42,7 @@ function App() {
           {/* Crop Health Screens (Vite) */}
           <Route path="/crop-health" element={<CropHealth />} />
           <Route path="/crop-satellite" element={<CropSatellite />} />
-          <Route path="/crop-weather" element={<CropWealth />} />
+          <Route path="/crop-wealth" element={<CropWeather />} />
          </Routes>
        </Router>
     </>
