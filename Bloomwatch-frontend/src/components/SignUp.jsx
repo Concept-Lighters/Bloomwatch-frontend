@@ -8,12 +8,19 @@ Instructions:
 
 import React, { useState } from "react";
 import { Eye, EyeOff, Calendar, ChevronDown } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleSignUp = (e) => {
+    e.preventDefault();
+    // After successful signup, navigate to farm setup
+    navigate('/farm-setup');
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
@@ -42,7 +49,7 @@ export default function SignUp() {
         </div>
 
         {/* Form */}
-        <form className="space-y-4">
+        <form onSubmit={handleSignUp} className="space-y-4">
           <div>
             <label className="text-sm font-medium text-gray-700">Full Name</label>
             <input

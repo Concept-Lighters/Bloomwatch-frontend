@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { ChevronLeft, Calendar, Clock, ChevronDown, Sprout, Droplets, Bug, Wheat } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
-export default function NewTask({ onNavigate, onComplete }) {
+export default function NewTask() {
+  const navigate = useNavigate();
   const [taskName, setTaskName] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('07:00 AM');
@@ -38,9 +40,7 @@ export default function NewTask({ onNavigate, onComplete }) {
       notes
     };
     console.log('New Task Created:', newTask);
-    if (onComplete) {
-      onComplete(newTask);
-    }
+    navigate('/calendar');
   };
 
   return (
@@ -48,7 +48,7 @@ export default function NewTask({ onNavigate, onComplete }) {
       {/* Header */}
       <div className="px-4 py-4 flex items-center border-b border-gray-100">
         <button 
-          onClick={() => onNavigate && onNavigate('calendar')}
+          onClick={() => navigate('/calendar')}
           className="mr-4 p-1 hover:bg-gray-100 rounded-full transition-colors"
         >
           <ChevronLeft className="w-6 h-6 text-gray-900" />

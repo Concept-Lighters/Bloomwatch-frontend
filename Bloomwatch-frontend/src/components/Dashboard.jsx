@@ -1,8 +1,17 @@
 import React from 'react';
-import { MapPin, CloudSun, Droplets, Wind, Calendar, Home, Map, BookOpen, Sprout, ClipboardList, ChevronRight } from 'lucide-react';
+import { MapPin, Droplets, Wind, Calendar, Home, Map, BookOpen, Sprout, ClipboardList } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
 // Dashboard Screen - Main Home Screen
-export default function Dashboard({ userName = 'Ray', location = 'Tema, Accra', onNavigate }) {
+export default function Dashboard() {
+  const navigate = useNavigate();
+  
+  // Get location from localStorage
+  const locationData = JSON.parse(localStorage.getItem('farmLocation') || '{}');
+  const location = locationData.district && locationData.region 
+    ? `${locationData.district}, ${locationData.region}` 
+    : 'Tema, Accra';
+
   const upcomingTasks = [
     { id: 1, title: 'Apply Fertilizer to Maize', chip: 'Maize', when: 'Today', checked: false },
     { id: 2, title: 'Spray Pesticide on Cassava', chip: 'Cassava', when: 'Oct 3', checked: false },
@@ -16,7 +25,7 @@ export default function Dashboard({ userName = 'Ray', location = 'Tema, Accra', 
         <p className="text-sm text-dashboardheadcolor font-myFont">
           <span className="inline-flex items-center">
             <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-            Good Morning, <span className="font-semibold text-gray-900 ml-1">{userName}</span> 👋
+            Good Morning, <span className="font-semibold text-gray-900 ml-1">Ray</span> 👋
           </span>
         </p>
       </div>
@@ -45,7 +54,7 @@ export default function Dashboard({ userName = 'Ray', location = 'Tema, Accra', 
               <div className="text-xs text-dashboardtextcolor font-myFont mt-1">Humidity &nbsp; Wind Speed</div>
             </div>
             <div className="relative w-48 h-24 flex items-center justify-center">
-              <img src = "Images/misc/sun.png"/>
+              <img src="/images/misc/sun.png" alt="Weather" />
             </div>
           </div>
         </div>
@@ -61,7 +70,7 @@ export default function Dashboard({ userName = 'Ray', location = 'Tema, Accra', 
 
       {/* Quick Actions */}
       <div className="px-4 mb-8">
-        <h3 className="text-sm font-semibold font-myFonttext-dashboardheadcolor mb-4">Quick Actions</h3>
+        <h3 className="text-sm font-semibold font-myFont text-dashboardheadcolor mb-4">Quick Actions</h3>
         <div className="grid grid-cols-4 gap-2">
           <button className="flex flex-col items-center py-3 rounded-lg bg-white">
             <div className="w-10 h-10 bg-actioncolor1 rounded-lg flex items-center justify-center mb-2">
@@ -69,7 +78,10 @@ export default function Dashboard({ userName = 'Ray', location = 'Tema, Accra', 
             </div>
             <span className="text-[10px] text-gray-700 text-center leading-tight">Community<br/>Report</span>
           </button>
-          <button className="flex flex-col items-center py-3 rounded-lg bg-white">
+          <button 
+            onClick={() => navigate('/crop-health')}
+            className="flex flex-col items-center py-3 rounded-lg bg-white"
+          >
             <div className="w-10 h-10 bg-actioncolor2 rounded-lg flex items-center justify-center mb-2">
               <Sprout className="w-5 h-5 text-green-600" />
             </div>
@@ -101,7 +113,7 @@ export default function Dashboard({ userName = 'Ray', location = 'Tema, Accra', 
               <img 
                 alt="Fall Armyworm" 
                 className="w-full h-full object-cover" 
-                src="Images/misc/maize.jpg" 
+                src="/images/misc/maize.jpg" 
               />
               <span className="absolute top-2 right-2 text-xs bg-callcardbgcolor px-2 py-0.5 rounded-full text-callcardcolor border border-callcardbdcolor font-myFont font-semibold">Alert</span>
             </div>
@@ -115,7 +127,7 @@ export default function Dashboard({ userName = 'Ray', location = 'Tema, Accra', 
               <img 
                 alt="Heavy Rainfall" 
                 className="w-full h-full object-cover" 
-                src="Images/misc/ricefarm.jpg" 
+                src="/images/misc/ricefarm.jpg" 
               />
               <span className="absolute top-2 right-2 text-xs bg-callcardbgcolor px-2 py-0.5 rounded-full text-callcardcolor border border-callcardbdcolor font-myFont font-semibold">Alert</span>
             </div>
@@ -167,7 +179,7 @@ export default function Dashboard({ userName = 'Ray', location = 'Tema, Accra', 
             <img 
               className="w-32 h-16 rounded-lg object-cover" 
               alt="Update" 
-              src="Images/misc/card1.png" 
+              src="/images/misc/card1.png" 
             />
             <div className="flex-1">
               <p className="text-sm font-semibold text-dashboardheadcolor font-myFont">
@@ -184,7 +196,7 @@ export default function Dashboard({ userName = 'Ray', location = 'Tema, Accra', 
             <img 
               className="w-32 h-16 rounded-lg object-cover" 
               alt="Update" 
-              src="Images/misc/card2.png" 
+              src="/images/misc/card2.png" 
             />
             <div className="flex-1">
               <p className="text-sm font-semibold text-dashboardheadcolor font-myFont">
@@ -208,14 +220,14 @@ export default function Dashboard({ userName = 'Ray', location = 'Tema, Accra', 
             <span className="text-[11px] font-medium">Home</span>
           </button>
           <button 
-            onClick={() => onNavigate && onNavigate('calendar')}
+            onClick={() => navigate('/calendar')}
             className="py-3 flex flex-col items-center text-gray-500 hover:text-dashboardheadcolor transition-colors"
           >
             <Calendar className="w-5 h-5" />
             <span className="text-[11px]">Calendar</span>
           </button>
           <button 
-            onClick={() => onNavigate && onNavigate('cropMap')}
+            onClick={() => navigate('/crop-health')}
             className="py-3 flex flex-col items-center text-gray-500 hover:text-dashboardheadcolor transition-colors"
           >
             <Map className="w-5 h-5" />

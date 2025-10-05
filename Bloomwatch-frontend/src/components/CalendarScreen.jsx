@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Edit2, Home, Calendar as CalendarIcon, Map } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
-export default function CalendarScreen({ onNavigate }) {
+export default function CalendarScreen() {
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(17);
   const [isCalendarExpanded, setIsCalendarExpanded] = useState(true);
   const [currentMonth, setCurrentMonth] = useState(7); // 0-11 (August = 7)
@@ -105,7 +107,7 @@ export default function CalendarScreen({ onNavigate }) {
       <div className="bg-white px-4 py-3 flex items-center justify-between border-b border-gray-200">
         <h1 className="text-lg font-bold font-myFont text-dashboardheadcolor">Calendar</h1>
         <button 
-          onClick={() => onNavigate && onNavigate('newTask')}
+          onClick={() => navigate('/new-task')}
           className="text-xs font-myFont underline text-linkcolor font-medium"
         >
           Add Task
@@ -230,7 +232,7 @@ export default function CalendarScreen({ onNavigate }) {
       <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto border-t border-gray-200 bg-white">
         <div className="grid grid-cols-2">
           <button 
-            onClick={() => onNavigate && onNavigate('dashboard')}
+            onClick={() => navigate('/dashboard')}
             className="py-3 flex flex-col items-center text-gray-500 hover:text-gray-700 transition-colors"
           >
             <Home className="w-5 h-5" />

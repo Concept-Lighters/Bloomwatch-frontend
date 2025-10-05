@@ -9,12 +9,19 @@ Instructions:
 
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    // After successful login, navigate to farm setup
+    navigate('/farm-setup');
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
@@ -59,7 +66,7 @@ export default function Login() {
           </div>
 
           {/* Login Form */}
-          <form className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="text-sm font-medium text-gray-700">
                 Phone Number
