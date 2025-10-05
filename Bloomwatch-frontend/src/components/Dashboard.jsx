@@ -12,8 +12,6 @@ export default function Dashboard() {
   // State for dynamic data
   const [weather, setWeather] = useState(null);
   const [tasks, setTasks] = useState([]);
-  const [communityUpdates, setCommunityUpdates] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   
   // Get location from localStorage
@@ -25,12 +23,11 @@ export default function Dashboard() {
   // Fetch data on component mount
   useEffect(() => {
     fetchDashboardData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDashboardData = async () => {
     try {
-      setLoading(true);
-      
       // Get user data
       const userData = JSON.parse(localStorage.getItem('user') || '{}');
       setUser(userData);
@@ -68,16 +65,13 @@ export default function Dashboard() {
 
       // Fetch community updates
       try {
-        const updatesData = await communityService.getUpdates(1, 5);
-        setCommunityUpdates(updatesData.updates || []);
+        await communityService.getUpdates(1, 5);
+        // Updates will be displayed from static data for now
       } catch (err) {
         console.error('Community updates fetch error:', err);
-        // Keep empty or use defaults
       }
     } catch (error) {
       console.error('Dashboard data fetch error:', error);
-    } finally {
-      setLoading(false);
     }
   };
 

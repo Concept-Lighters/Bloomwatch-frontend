@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -10,13 +10,28 @@ import {
   Map,
 } from "lucide-react";
 import { useNavigate } from "react-router";
+import tasksService from "../services/tasksService";
 
 export default function CalendarScreen() {
   const navigate = useNavigate();
+  // eslint-disable-next-line no-unused-vars
   const [selectedDate, setSelectedDate] = useState(17);
   const [isCalendarExpanded, setIsCalendarExpanded] = useState(true);
   const [currentMonth, setCurrentMonth] = useState(7); // 0-11 (August = 7)
   const [currentYear, setCurrentYear] = useState(2025);
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const fetchTasks = async () => {
+    try {
+      await tasksService.getTasks();
+      // Tasks will be displayed from static data for now
+    } catch (err) {
+      console.error('Tasks fetch error:', err);
+    }
+  };
 
   const monthNames = [
     "January",
