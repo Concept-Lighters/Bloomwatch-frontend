@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, Calendar, Clock, ChevronDown, Sprout, Droplets, Bug, Wheat } from 'lucide-react';
 import { useNavigate } from 'react-router';
+import tasksService from '../services/tasksService';
 
 export default function NewTask() {
   const navigate = useNavigate();
@@ -10,6 +11,8 @@ export default function NewTask() {
   const [selectedCrop, setSelectedCrop] = useState('');
   const [selectedTaskType, setSelectedTaskType] = useState('');
   const [notes, setNotes] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const crops = [
     'Maize (Corn)',
@@ -30,17 +33,34 @@ export default function NewTask() {
     { id: 'harvest', name: 'Harvest', icon: Wheat, color: 'text-yellow-600', bgColor: 'bg-yellow-50' }
   ];
 
-  const handleCompleteTask = () => {
-    const newTask = {
-      taskName,
-      date,
-      time,
-      crop: selectedCrop,
-      taskType: selectedTaskType,
-      notes
-    };
-    console.log('New Task Created:', newTask);
-    navigate('/calendar');
+  const handleCompleteTask = async () => {
+    if (!taskName || !date || !selectedCrop || !selectedTaskType) {
+      setError('Please fill in all required fields');
+      return;
+    }
+
+    setError('');
+    setLoading(true);
+
+    try {
+      const newTask = {
+        title: taskName,
+        date,
+        time,
+        crop: selectedCrop,
+        taskType: selectedTaskType,
+        notes
+      };
+      
+      await tasksService.createTask(newTask);
+      console.log('New Task Created:', newTask);
+      navigate('/calendar');
+    } catch (err) {
+      setError(err.message || 'Failed to create task. Please try again.');
+      console.error('Task creation error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -174,11 +194,17 @@ export default function NewTask() {
 
       {/* Complete Task Button */}
       <div className="p-4 pb-6">
+        {error && (
+          <div className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
         <button
           onClick={handleCompleteTask}
-          className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-4 rounded-xl transition-colors shadow-sm"
+          disabled={loading}
+          className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-4 rounded-xl transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Complete Task
+          {loading ? 'Creating Task...' : 'Complete Task'}
         </button>
       </div>
     </div>

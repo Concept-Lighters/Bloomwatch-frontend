@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, MapPin, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router';
+import farmService from '../services/farmService';
 
 // Farm Location Setup - Step 1 of Farm Onboarding
 export default function FarmLocationSetup() {
@@ -8,6 +9,8 @@ export default function FarmLocationSetup() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('Greater Accra');
   const [selectedDistrict, setSelectedDistrict] = useState('Accra Metro');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const regions = ['Greater Accra', 'Northern', 'Upper East', 'Upper West', 'Central', 'Volta', 'Ashanti', 'Eastern', 'Western', 'Ahafo', 'Savannah', 'Oti', 'Bono East', 'Bono', 'Western North'];
   
@@ -41,10 +44,26 @@ export default function FarmLocationSetup() {
   // Get districts for selected region
   const districts = regionDistricts[selectedRegion] || [];
 
-  const handleNext = () => {
-    // Store location data in localStorage
-    localStorage.setItem('farmLocation', JSON.stringify({ region: selectedRegion, district: selectedDistrict }));
-    navigate('/choose-crops');
+  const handleNext = async () => {
+    setError('');
+    setLoading(true);
+
+    try {
+      // Save to backend
+      await farmService.setupLocation({ 
+        region: selectedRegion, 
+        district: selectedDistrict 
+      });
+      
+      // Store location data in localStorage
+      localStorage.setItem('farmLocation', JSON.stringify({ region: selectedRegion, district: selectedDistrict }));
+      navigate('/choose-crops');
+    } catch (err) {
+      setError(err.message || 'Failed to save location. Please try again.');
+      console.error('Location setup error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -141,11 +160,17 @@ export default function FarmLocationSetup() {
 
       {/* Next Button */}
       <div className="p-6 pt-0">
+        {error && (
+          <div className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
         <button 
           onClick={handleNext}
-          className="w-full bg-barbackgroundcolor hover:bg-indigo-700 text-white font-semibold py-4 rounded-2xl transition-colors"
+          disabled={loading}
+          className="w-full bg-barbackgroundcolor hover:bg-indigo-700 text-white font-semibold py-4 rounded-2xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Next
+          {loading ? 'Saving...' : 'Next'}
         </button>
       </div>
     </div>

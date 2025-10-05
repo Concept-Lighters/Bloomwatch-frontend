@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Lightbulb } from 'lucide-react';
 import { useNavigate } from 'react-router';
+import farmService from '../services/farmService';
 
 // Choose Your Crops - Step 2 of Farm Onboarding
 export default function ChooseYourCrops() {
   const navigate = useNavigate();
   const [selectedCrops, setSelectedCrops] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const crops = [
     { id: 1, name: 'Maize(Corn)', image: '/images/crops/maize.jpg' },
@@ -28,10 +31,34 @@ export default function ChooseYourCrops() {
     );
   };
 
-  const handleComplete = () => {
-    // Store crops data in localStorage
-    localStorage.setItem('selectedCrops', JSON.stringify(selectedCrops));
-    navigate('/dashboard');
+  const handleComplete = async () => {
+    if (selectedCrops.length === 0) {
+      setError('Please select at least one crop');
+      return;
+    }
+
+    setError('');
+    setLoading(true);
+
+    try {
+      // Get crop names based on selected IDs
+      const cropNames = selectedCrops.map(id => {
+        const crop = crops.find(c => c.id === id);
+        return crop ? crop.name : null;
+      }).filter(Boolean);
+
+      // Save to backend
+      await farmService.setupCrops({ crops: cropNames });
+      
+      // Store crops data in localStorage
+      localStorage.setItem('selectedCrops', JSON.stringify(selectedCrops));
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.message || 'Failed to save crops. Please try again.');
+      console.error('Crops setup error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -120,16 +147,21 @@ export default function ChooseYourCrops() {
 
       {/* Complete Setup Button */}
       <div className="p-6 pt-0">
+        {error && (
+          <div className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
         <button 
           onClick={handleComplete}
           className={`w-full font-semibold py-4 rounded-2xl transition-colors ${
-            selectedCrops.length > 0
+            selectedCrops.length > 0 && !loading
               ? 'bg-barbackgroundcolor hover:bg-indigo-700 text-white'
               : 'bg-gray-300 text-gray-500 cursor-not-allowed'
           }`}
-          disabled={selectedCrops.length === 0}
+          disabled={selectedCrops.length === 0 || loading}
         >
-          Complete Setup
+          {loading ? 'Completing Setup...' : 'Complete Setup'}
         </button>
       </div>
     </div>

@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapPin, Droplets, Wind, Calendar, Home, Map, BookOpen, Sprout, ClipboardList } from 'lucide-react';
 import { useNavigate } from 'react-router';
+import weatherService from '../services/weatherService';
+import tasksService from '../services/tasksService';
+import communityService from '../services/communityService';
 
 // Dashboard Screen - Main Home Screen
 export default function Dashboard() {
   const navigate = useNavigate();
+  
+  // State for dynamic data
+  const [weather, setWeather] = useState(null);
+  const [tasks, setTasks] = useState([]);
+  const [user, setUser] = useState(null);
   
   // Get location from localStorage
   const locationData = JSON.parse(localStorage.getItem('farmLocation') || '{}');
@@ -12,7 +20,62 @@ export default function Dashboard() {
     ? `${locationData.district}, ${locationData.region}` 
     : 'Tema, Accra';
 
-  const upcomingTasks = [
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchDashboardData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      // Get user data
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+      setUser(userData);
+
+      // Fetch weather data
+      if (locationData.district && locationData.region) {
+        try {
+          const weatherData = await weatherService.getWeather(locationData);
+          setWeather(weatherData);
+        } catch (err) {
+          console.error('Weather fetch error:', err);
+          // Use default weather if API fails
+          setWeather({
+            temperature: 28,
+            condition: 'Partly Cloudy',
+            humidity: 76,
+            windSpeed: 12
+          });
+        }
+      }
+
+      // Fetch upcoming tasks
+      try {
+        const tasksData = await tasksService.getUpcomingTasks();
+        setTasks(tasksData.tasks || []);
+      } catch (err) {
+        console.error('Tasks fetch error:', err);
+        // Use default tasks if API fails
+        setTasks([
+          { id: 1, title: 'Apply Fertilizer to Maize', chip: 'Maize', when: 'Today', checked: false },
+          { id: 2, title: 'Spray Pesticide on Cassava', chip: 'Cassava', when: 'Oct 3', checked: false },
+          { id: 3, title: 'Check Irrigation System', chip: 'All', when: 'Oct 5', checked: false },
+        ]);
+      }
+
+      // Fetch community updates
+      try {
+        await communityService.getUpdates(1, 5);
+        // Updates will be displayed from static data for now
+      } catch (err) {
+        console.error('Community updates fetch error:', err);
+      }
+    } catch (error) {
+      console.error('Dashboard data fetch error:', error);
+    }
+  };
+
+  const upcomingTasks = tasks.length > 0 ? tasks : [
     { id: 1, title: 'Apply Fertilizer to Maize', chip: 'Maize', when: 'Today', checked: false },
     { id: 2, title: 'Spray Pesticide on Cassava', chip: 'Cassava', when: 'Oct 3', checked: false },
     { id: 3, title: 'Check Irrigation System', chip: 'All', when: 'Oct 5', checked: false },
@@ -26,7 +89,7 @@ export default function Dashboard() {
         <p className="text-sm text-dashboardheadcolor font-myFont">
           <span className="inline-flex items-center">
             <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-            Good Morning, <span className="font-semibold text-gray-900 ml-1">Ray</span> 👋
+            Good Morning, <span className="font-semibold text-gray-900 ml-1">{user?.fullName || user?.name || 'Ray'}</span> 👋
           </span>
         </p>
       </div>
@@ -40,16 +103,20 @@ export default function Dashboard() {
           </div>
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <div className="text-5xl font-myFont font-bold text-headercolor mb-1">27°</div>
-              <div className="text-dashboardtextcolor font-myFont text-sm mb-3">Partly Cloudy</div>
+              <div className="text-5xl font-myFont font-bold text-headercolor mb-1">
+                {weather ? `${weather.temperature}°` : '27°'}
+              </div>
+              <div className="text-dashboardtextcolor font-myFont text-sm mb-3">
+                {weather ? weather.condition : 'Partly Cloudy'}
+              </div>
               <div className="flex items-center gap-4 text-xs font-myFont text-dashboardtextcolor">
                 <span className="inline-flex items-center">
                   <Droplets className="w-3 h-3 mr-1" />
-                  77%
+                  {weather ? `${weather.humidity}%` : '77%'}
                 </span>
                 <span className="inline-flex items-center">
                   <Wind className="w-3 h-3 mr-1" />
-                  15km/h
+                  {weather ? `${weather.windSpeed}km/h` : '15km/h'}
                 </span>
               </div>
               <div className="text-xs text-dashboardtextcolor font-myFont mt-1">Humidity &nbsp; Wind Speed</div>
@@ -65,7 +132,9 @@ export default function Dashboard() {
       <div className="px-4 mb-8">
         <div className="bg-weatherprecolor rounded-lg p-3 border border-gray-200">
           <h3 className="text-xs font-semibold font-myFont text-weatherpretextcolor mb-1">Today's Weather Prediction</h3>
-          <p className="text-xs font-myFont text-weatherpretextcolor2">It's going to rain all day</p>
+          <p className="text-xs font-myFont text-weatherpretextcolor2">
+            {weather?.prediction || "It's going to rain all day"}
+          </p>
         </div>
       </div>
 

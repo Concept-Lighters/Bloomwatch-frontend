@@ -12,15 +12,41 @@ import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
+import authService from "../services/authService";
 
 export default function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // After successful login, navigate to farm setup
-    navigate('/farm-setup');
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await authService.login({ email, password });
+      
+      // Store user data
+      if (response.user) {
+        localStorage.setItem('user', JSON.stringify(response.user));
+      }
+      
+      // Navigate based on user setup status
+      if (response.user?.farmSetupComplete) {
+        navigate('/dashboard');
+      } else {
+        navigate('/farm-setup');
+      }
+    } catch (err) {
+      setError(err.message || 'Login failed. Please check your credentials.');
+      console.error('Login error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -67,6 +93,12 @@ export default function Login() {
 
           {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-4">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+            
             <div>
               <label className="text-sm font-medium text-gray-700">
                 Email
@@ -74,7 +106,11 @@ export default function Login() {
               <input
                 type="email"
                 placeholder="Email address"
-                className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={loading}
+                className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100"
               />
             </div>
 
@@ -86,7 +122,11 @@ export default function Login() {
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 pr-10"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 pr-10 disabled:bg-gray-100"
                 />
                 {showPassword ? (
                   <EyeOff
@@ -113,9 +153,10 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full mt-4 py-3 rounded-full bg-purple-700 text-white font-medium text-lg shadow-md hover:opacity-95 focus:outline-none focus:ring-4 focus:ring-purple-200 hover:cursor-pointer"
+              disabled={loading}
+              className="w-full mt-4 py-3 rounded-full bg-purple-700 text-white font-medium text-lg shadow-md hover:opacity-95 focus:outline-none focus:ring-4 focus:ring-purple-200 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Login
+              {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
 
