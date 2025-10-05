@@ -14,16 +14,16 @@ function App() {
 
   return (
     <>
-      {/* <Router> */}
-        {/* <Routes>
-          {/* <Route path="/" element={<OnboardingCard1 />} />
+      <Router> 
+        <Routes>
+           <Route path="/" element={<OnboardingCard1 />} />
           <Route path="/onboarding2" element={<OnboardingCard2 />} />
           <Route path="/onboarding3" element={<OnboardingCard3/>}/>
           <Route path="/signup" element={<SignUp/>} />
-          <Route path="/login" element={<Login/>} />         */}
-          {/* </Routes> */}
-      {/* </Router> */}
-      <CropHealth />
+          <Route path="/login" element={<Login/>} />         
+         </Routes>
+       </Router>
+      {/* <CropHealth /> */}
 
     </>
   )
